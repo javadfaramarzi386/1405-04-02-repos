@@ -1,0 +1,90 @@
+{# templates/accounts/report_user.html #}
+
+{# استفاده از layout اصلی پروژه برای یکپارچگی UI #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه (در تب مرورگر نمایش داده می‌شود) #}
+{% block title %}گزارش کاربر{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه گزارش کاربر
+---------------------------------------- #}
+{% block content %}
+
+<!-- مرکز کردن فرم در صفحه -->
+<div class="row justify-content-center mt-5">
+
+    <!-- تعیین عرض مناسب برای فرم -->
+    <div class="col-lg-6">
+
+        <!-- کارت اصلی گزارش -->
+        <div class="card shadow">
+
+            <!-- هدر هشداردهنده (قرمز برای عملیات حساس) -->
+            <div class="card-header bg-danger text-white">
+
+                <!-- نمایش نام کاربر گزارش‌شده -->
+                <h5>
+                    گزارش کاربر
+                    <strong>@{{ reported_user.username }}</strong>
+                </h5>
+
+            </div>
+
+            <!-- بدنه فرم -->
+            <div class="card-body">
+
+                <!-- فرم ارسال گزارش -->
+                <form method="post">
+
+                    {# محافظت CSRF برای جلوگیری از درخواست‌های جعلی #}
+                    {% csrf_token %}
+
+                    <!-- ----------------------------------------
+                         فیلد توضیح گزارش
+                    ---------------------------------------- -->
+                    <div class="mb-3">
+
+                        <!-- برچسب فیلد -->
+                        <label class="form-label">
+                            دلیل گزارش (لطفاً با جزئیات بنویسید)
+                        </label>
+
+                        <!-- فیلد متن گزارش -->
+                        <textarea name="reason"
+                                  class="form-control"
+                                  rows="7"
+                                  placeholder="توضیح کامل دلیل گزارش خود را اینجا بنویسید..."
+                                  required>
+                        </textarea>
+
+                    </div>
+
+                    <!-- ----------------------------------------
+                         دکمه‌های عملیات
+                    ---------------------------------------- -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                        <!-- بازگشت بدون ثبت گزارش -->
+                        <a href="{% url 'accounts:profile_detail' reported_user.username %}"
+                           class="btn btn-secondary">
+
+                            انصراف
+                        </a>
+
+                        <!-- ارسال گزارش به سرور -->
+                        <button type="submit" class="btn btn-danger">
+                            ارسال گزارش
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

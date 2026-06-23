@@ -1,0 +1,186 @@
+{# templates/forum/post_list.html #}
+
+{# استفاده از قالب پایه برای یکپارچگی طراحی سایت #}
+{% extends 'base.html' %}
+
+{# ----------------------------------------
+   عنوان صفحه (اگر از view ارسال شود)
+   در غیر این صورت مقدار پیش‌فرض "فروم"
+---------------------------------------- #}
+{% block title %}
+{{ title|default:'فروم' }}
+{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه لیست پست‌ها
+---------------------------------------- #}
+{% block content %}
+
+<div class="row">
+
+    <!-- ========================================
+         ستون کناری: دسته‌بندی‌ها
+    ======================================== -->
+    <div class="col-lg-3">
+
+        <div class="card sticky-top" style="top: 20px;">
+
+            <!-- عنوان بخش دسته‌بندی‌ها -->
+            <div class="card-header bg-light">
+                <h6>دسته‌بندی‌ها</h6>
+            </div>
+
+            <!-- لیست دسته‌بندی‌ها -->
+            <div class="list-group list-group-flush">
+
+                <!-- لینک همه پست‌ها -->
+                <a href="{% url 'forum:post_list' %}"
+                   class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
+                    همه موضوعات
+                </a>
+
+                <!-- حلقه نمایش دسته‌بندی‌ها -->
+                {% for cat in categories %}
+
+                    {# فقط دسته‌هایی که slug دارند نمایش داده شوند #}
+                    {% if cat.slug %}
+
+                        <a href="{% url 'forum:category_posts' cat.slug %}"
+                           class="list-group-item list-group-item-action {% if category == cat %}active{% endif %}">
+
+                            <!-- نام دسته‌بندی -->
+                            {{ cat.name }}
+
+                            <!-- تعداد پست‌های هر دسته -->
+                            <span class="badge bg-primary rounded-pill float-end">
+                                {{ cat.post_count|default:0 }}
+                            </span>
+
+                        </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         ستون اصلی: لیست پست‌ها
+    ======================================== -->
+    <div class="col-lg-9">
+
+        <!-- هدر صفحه + دکمه ایجاد پست -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h4>موضوعات اخیر</h4>
+
+            <!-- دکمه ایجاد پست جدید -->
+            <a href="{% url 'forum:create_post' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> ایجاد موضوع جدید
+            </a>
+
+        </div>
+
+        <!-- ----------------------------------------
+             نمایش لیست پست‌ها
+        ---------------------------------------- -->
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <!-- کارت هر پست -->
+                <div class="card post-card mb-3">
+
+                    <div class="card-body">
+
+                        <!-- عنوان پست + لینک به صفحه جزئیات -->
+                        <div class="d-flex justify-content-between">
+
+                            <h5 class="card-title">
+                                <a href="{% url 'forum:post_detail' post.pk %}"
+                                   class="text-decoration-none">
+
+                                    {{ post.title }}
+
+                                </a>
+                            </h5>
+
+                            <!-- تاریخ ایجاد پست -->
+                            <small class="text-muted">
+                                {{ post.created_at|date:"d M Y - H:i" }}
+                            </small>
+
+                        </div>
+
+                        <!-- اطلاعات نویسنده و دسته‌بندی -->
+                        <p class="card-text text-muted small">
+
+                            توسط <strong>{{ post.author.username }}</strong>
+
+                            در
+                            <span class="badge bg-secondary">
+                                {{ post.category.name|default:'بدون دسته' }}
+                            </span>
+
+                        </p>
+
+                        <!-- خلاصه متن پست -->
+                        <p class="card-text">
+                            {{ post.content|truncatewords:30|linebreaksbr }}
+                        </p>
+
+                        <!-- بخش آمار + دکمه مشاهده -->
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <!-- تعداد کامنت‌ها -->
+                                <span class="badge bg-info">
+                                    {{ post.comments.count }} نظر
+                                </span>
+
+                                <!-- تعداد لایک‌ها -->
+                                <span class="badge bg-primary">
+                                    {{ post.likes.count }} لایک
+                                </span>
+                            </div>
+
+                            <!-- لینک مشاهده کامل پست -->
+                            <a href="{% url 'forum:post_detail' post.pk %}"
+                               class="btn btn-outline-primary btn-sm">
+
+                                خواندن کامل →
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <!-- اگر هیچ پستی وجود نداشت -->
+            <div class="alert alert-info text-center py-5">
+
+                هنوز هیچ موضوعی ثبت نشده است.<br>
+
+                <a href="{% url 'forum:create_post' %}"
+                   class="btn btn-success mt-3">
+
+                    اولین موضوع را شما ایجاد کنید
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

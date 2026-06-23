@@ -1,0 +1,147 @@
+{# templates/accounts/profile_detail.html #}
+
+{# استفاده از layout اصلی پروژه #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه (داینامیک از view ارسال می‌شود) #}
+{% block title %}{{ title }}{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه پروفایل
+---------------------------------------- #}
+{% block content %}
+
+<div class="row mt-4">
+
+    <!-- ========================================
+         ستون سمت چپ: کارت پروفایل کاربر
+    ======================================== -->
+    <div class="col-lg-4">
+
+        <!-- کارت پروفایل با حالت چسبان (sticky) -->
+        <div class="card text-center sticky-top" style="top: 20px;">
+
+            <!-- نمایش تصویر پروفایل -->
+            {% if target_profile.avatar %}
+
+                <!-- اگر کاربر تصویر دارد -->
+                <img src="{{ target_profile.avatar.url }}"
+                     class="rounded-circle mx-auto mt-4"
+                     style="width: 160px; height: 160px; object-fit: cover; border: 4px solid #fff;">
+
+            {% else %}
+
+                <!-- اگر تصویر ندارد، آیکون پیش‌فرض نمایش داده شود -->
+                <div class="mx-auto mt-4 bg-light rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 160px; height: 160px;">
+
+                    <i class="bi bi-person-fill"
+                       style="font-size: 5rem; color: #ccc;"></i>
+
+                </div>
+
+            {% endif %}
+
+            <!-- اطلاعات پایه کاربر -->
+            <div class="card-body">
+
+                <!-- نام نمایشی (nickname یا username) -->
+                <h4>{{ target_profile.nickname|default:target_user.username }}</h4>
+
+                <!-- نام کاربری (username) -->
+                <p class="text-muted mb-3">@{{ target_user.username }}</p>
+
+                <!-- ----------------------------------------
+                     دکمه‌های اکشن (بسته به مالکیت پروفایل)
+                ---------------------------------------- -->
+                {% if is_own_profile %}
+
+                    <!-- اگر پروفایل متعلق به خود کاربر باشد -->
+                    <a href="{% url 'accounts:edit_profile' %}"
+                       class="btn btn-primary w-100 mb-2">
+
+                        <i class="bi bi-pencil"></i> ویرایش پروفایل
+                    </a>
+
+                {% else %}
+
+                    <!-- اگر پروفایل متعلق به کاربر دیگر باشد -->
+                    <a href="{% url 'accounts:report_user' target_user.username %}"
+                       class="btn btn-outline-danger w-100">
+
+                        <i class="bi bi-flag"></i> گزارش کاربر
+                    </a>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         ستون سمت راست: اطلاعات کامل پروفایل
+    ======================================== -->
+    <div class="col-lg-8">
+
+        <div class="card">
+
+            <!-- هدر بخش اطلاعات -->
+            <div class="card-header">
+                <h5>اطلاعات شخصی</h5>
+            </div>
+
+            <!-- بدنه اطلاعات -->
+            <div class="card-body">
+
+                <!-- ----------------------------------------
+                     بخش بیوگرافی (در صورت فعال بودن نمایش)
+                ---------------------------------------- -->
+                {% if target_profile.bio and target_profile.show_bio %}
+
+                    <div class="mb-4">
+                        <strong>درباره من:</strong>
+
+                        <!-- linebreaks: تبدیل خط‌های جدید به <br> -->
+                        <p class="mt-2">{{ target_profile.bio|linebreaks }}</p>
+                    </div>
+
+                {% endif %}
+
+                <!-- ----------------------------------------
+                     اطلاعات ساختار یافته پروفایل
+                ---------------------------------------- -->
+                <div class="row">
+
+                    <!-- سن فرزند -->
+                    {% if target_profile.child_age and target_profile.show_child_age %}
+                        <div class="col-md-6 mb-3">
+                            <strong>سن فرزند:</strong>
+                            {{ target_profile.child_age }} سال
+                        </div>
+                    {% endif %}
+
+                    <!-- نوع شرایط / معلولیت -->
+                    {% if target_profile.condition_type and target_profile.show_condition_type %}
+                        <div class="col-md-6 mb-3">
+                            <strong>نوع شرایط فرزند:</strong>
+                            {{ target_profile.condition_type }}
+                        </div>
+                    {% endif %}
+
+                    <!-- شهر -->
+                    {% if target_profile.location and target_profile.show_location %}
+                        <div class="col-md-6 mb-3">
+                            <strong>شهر:</strong>
+                            {{ target_profile.location }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

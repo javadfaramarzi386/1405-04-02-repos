@@ -1,0 +1,67 @@
+{# templates/forum/create_post.html #}
+
+{# استفاده از قالب پایه پروژه برای یکپارچگی UI #}
+{% extends 'base.html' %}
+
+{# ----------------------------------------
+   عنوان صفحه (داینامیک از view ارسال می‌شود)
+---------------------------------------- #}
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه ایجاد پست
+---------------------------------------- #}
+{% block content %}
+
+<!-- مرکز کردن فرم در صفحه -->
+<div class="row justify-content-center mt-5">
+
+    <!-- تعیین عرض مناسب برای فرم در صفحات بزرگ -->
+    <div class="col-lg-8">
+
+        <!-- کارت اصلی فرم -->
+        <div class="card shadow">
+
+            <!-- هدر کارت (عنوان صفحه) -->
+            <div class="card-header bg-primary text-white">
+                <h5>{{ title }}</h5>
+            </div>
+
+            <!-- بدنه کارت -->
+            <div class="card-body">
+
+                <!-- فرم ایجاد پست -->
+                <form method="post">
+
+                    {# امنیت CSRF برای جلوگیری از درخواست جعلی #}
+                    {% csrf_token %}
+
+                    {# نمایش تمام فیلدهای فرم به صورت پیش‌فرض Django #}
+                    {{ form.as_p }}
+
+                    <!-- دکمه‌های عملیاتی فرم -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+
+                        <!-- دکمه انصراف و بازگشت به لیست پست‌ها -->
+                        <a href="{% url 'forum:post_list' %}" class="btn btn-secondary">
+                            انصراف
+                        </a>
+
+                        <!-- ارسال فرم و انتشار پست -->
+                        <button type="submit" class="btn btn-primary">
+                            انتشار موضوع
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

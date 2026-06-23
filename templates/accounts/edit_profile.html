@@ -1,0 +1,64 @@
+{# templates/accounts/edit_profile.html #}
+
+{# استفاده از قالب پایه پروژه (layout اصلی سایت) #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه (قابل نمایش در tab مرورگر) #}
+{% block title %}ویرایش پروفایل{% endblock %}
+
+{# ----------------------------------------
+   بخش محتوای اصلی صفحه
+---------------------------------------- #}
+{% block content %}
+
+<!-- چینش صفحه به صورت وسط‌چین -->
+<div class="row justify-content-center mt-5">
+
+    <!-- عرض فرم در صفحه‌های بزرگ -->
+    <div class="col-lg-8">
+
+        <!-- کارت اصلی فرم -->
+        <div class="card shadow">
+
+            <!-- هدر کارت -->
+            <div class="card-header bg-info text-white">
+                <h5>ویرایش پروفایل</h5>
+            </div>
+
+            <!-- بدنه کارت -->
+            <div class="card-body">
+
+                <!-- فرم ویرایش پروفایل -->
+                <form method="post" enctype="multipart/form-data">
+
+                    {# امنیت CSRF برای جلوگیری از حملات #}
+                    {% csrf_token %}
+
+                    {# نمایش خودکار تمام فیلدهای فرم به صورت <p> #}
+                    {{ form.as_p }}
+
+                    <!-- دکمه‌های عملیاتی فرم -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+
+                        <!-- دکمه انصراف و بازگشت به پروفایل کاربر -->
+                        <a href="{% url 'accounts:profile_detail' request.user.username %}"
+                           class="btn btn-secondary me-md-2">
+                            انصراف
+                        </a>
+
+                        <!-- دکمه ارسال فرم (ذخیره تغییرات) -->
+                        <button type="submit" class="btn btn-info">
+                            ذخیره تغییرات
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

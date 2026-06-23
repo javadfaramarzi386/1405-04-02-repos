@@ -1,0 +1,72 @@
+{# templates/accounts/register.html #}
+
+{# استفاده از قالب پایه اصلی سایت (layout مشترک) #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه (در تب مرورگر نمایش داده می‌شود) #}
+{% block title %}ثبت‌نام{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه ثبت‌نام
+---------------------------------------- #}
+{% block content %}
+
+<!-- مرکز کردن فرم در صفحه -->
+<div class="row justify-content-center mt-5">
+
+    <!-- تعیین عرض فرم در صفحات مختلف -->
+    <div class="col-lg-7 col-md-9">
+
+        <!-- کارت اصلی فرم ثبت‌نام -->
+        <div class="card shadow">
+
+            <!-- هدر جذاب برای فرم ثبت‌نام -->
+            <div class="card-header bg-success text-white text-center py-4">
+
+                <!-- عنوان اصلی -->
+                <h4>ثبت‌نام در فروم خانواده‌ها</h4>
+
+                <!-- پیام خوش‌آمدگویی -->
+                <p class="mb-0">به جمع ما خوش آمدید ❤️</p>
+
+            </div>
+
+            <!-- بدنه کارت -->
+            <div class="card-body p-4">
+
+                <!-- فرم ثبت‌نام -->
+                <form method="post">
+
+                    {# امنیت CSRF برای جلوگیری از حملات جعلی #}
+                    {% csrf_token %}
+
+                    {# نمایش تمام فیلدهای فرم به صورت خودکار #}
+                    {{ form.as_p }}
+
+                    <!-- دکمه ارسال فرم -->
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                        ثبت‌نام
+                    </button>
+
+                </form>
+
+                <!-- لینک ورود برای کاربران موجود -->
+                <div class="text-center mt-4">
+
+                    <p>
+                        قبلاً عضو شده‌اید؟
+
+                        <a href="{% url 'accounts:login' %}" class="text-decoration-none">
+                            ورود به حساب
+                        </a>
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

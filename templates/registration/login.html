@@ -1,0 +1,100 @@
+{# templates/registration/login.html #}
+
+{# استفاده از قالب پایه برای یکپارچگی طراحی سایت #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه (در تب مرورگر نمایش داده می‌شود) #}
+{% block title %}
+ورود به حساب کاربری
+{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه ورود
+---------------------------------------- #}
+{% block content %}
+
+<!-- مرکز کردن فرم در صفحه -->
+<div class="row justify-content-center mt-5">
+
+    <!-- تعیین عرض مناسب برای فرم -->
+    <div class="col-lg-6 col-md-8">
+
+        <!-- کارت اصلی فرم ورود -->
+        <div class="card shadow">
+
+            <!-- هدر فرم -->
+            <div class="card-header bg-primary text-white text-center py-4">
+
+                <h4>ورود به حساب کاربری</h4>
+
+            </div>
+
+            <!-- بدنه کارت -->
+            <div class="card-body p-4">
+
+                <!-- ----------------------------------------
+                     نمایش پیام‌های سیستم (مثل خطا یا موفقیت)
+                ---------------------------------------- -->
+                {% if messages %}
+
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+
+                <!-- ----------------------------------------
+                     فرم ورود کاربر
+                ---------------------------------------- -->
+                <form method="post">
+
+                    {# امنیت CSRF برای جلوگیری از درخواست‌های جعلی #}
+                    {% csrf_token %}
+
+                    {# فرم پیش‌فرض Django AuthenticationForm #}
+                    {{ form.as_p }}
+
+                    <!-- دکمه ورود -->
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">
+                        ورود
+                    </button>
+
+                </form>
+
+                <!-- ----------------------------------------
+                     لینک‌های کمکی (ثبت‌نام و فراموشی رمز)
+                ---------------------------------------- -->
+                <div class="text-center mt-4">
+
+                    <!-- لینک ثبت‌نام -->
+                    <p>
+                        حساب کاربری ندارید؟
+                        <a href="{% url 'accounts:register' %}"
+                           class="text-decoration-none fw-bold">
+
+                            ثبت‌نام کنید
+
+                        </a>
+                    </p>
+
+                    <!-- لینک بازیابی رمز عبور -->
+                    <p class="mt-2">
+                        <a href="{% url 'accounts:password_reset' %}"
+                           class="text-muted">
+
+                            رمز عبور خود را فراموش کرده‌اید؟
+
+                        </a>
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{# templates/forum/category_posts.html #}
+
+{# استفاده از قالب پایه پروژه برای یکپارچگی UI #}
+{% extends 'base.html' %}
+
+{# ----------------------------------------
+   عنوان صفحه (نمایش در تب مرورگر)
+   نام دسته‌بندی به صورت داینامیک
+---------------------------------------- #}
+{% block title %}
+دسته‌بندی: {{ category.name }}
+{% endblock %}
+
+{# ----------------------------------------
+   محتوای اصلی صفحه
+---------------------------------------- #}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- عنوان دسته‌بندی -->
+    <h3 class="mb-4">
+        دسته‌بندی: {{ category.name }}
+    </h3>
+
+    <!-- توضیحات دسته‌بندی -->
+    <p class="text-muted">
+        {{ category.description }}
+    </p>
+
+    <hr>
+
+    <!-- ----------------------------------------
+         لیست پست‌های این دسته‌بندی
+    ---------------------------------------- -->
+    <div class="row">
+
+        {% for post in posts %}
+
+            <!-- هر پست داخل یک کارت -->
+            <div class="col-md-6 mb-3">
+
+                <div class="card post-card">
+
+                    <div class="card-body">
+
+                        <!-- عنوان پست + لینک به صفحه جزئیات -->
+                        <h5>
+                            <a href="{% url 'forum:post_detail' post.pk %}">
+                                {{ post.title }}
+                            </a>
+                        </h5>
+
+                        <!-- نام نویسنده پست -->
+                        <p class="text-muted">
+                            نویسنده: {{ post.author.username }}
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <!-- اگر هیچ پستی وجود نداشت -->
+            <p class="text-center text-muted">
+                در این دسته‌بندی هنوز پستی وجود ندارد.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,272 @@
+{# templates/forum/post_detail.html #}
+
+{# استفاده از قالب پایه برای یکپارچگی طراحی سایت #}
+{% extends 'base.html' %}
+
+{# عنوان صفحه = عنوان پست #}
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{# =========================================
+   محتوای اصلی صفحه (جزئیات پست + کامنت‌ها)
+========================================= #}
+{% block content %}
+
+<div class="row">
+
+    <!-- =====================================
+         ستون اصلی: پست + کامنت‌ها
+    ===================================== -->
+    <div class="col-lg-8">
+
+        <!-- =====================================
+             کارت پست اصلی
+        ===================================== -->
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <!-- عنوان پست -->
+                <h3>{{ post.title }}</h3>
+
+                <!-- =====================================
+                     بخش نویسنده پست + تصویر پروفایل
+                ===================================== -->
+                <div class="d-flex align-items-center mb-3">
+
+                    <!-- اگر کاربر پروفایل و عکس داشته باشد -->
+                    {% if post.author.profile and post.author.profile.avatar %}
+
+                        <img src="{{ post.author.profile.avatar.url }}"
+                             class="rounded-circle me-3"
+                             style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #ddd;">
+
+                    <!-- حالت جایگزین (اگر avatar مستقیم روی user باشد - احتمالی) -->
+                    {% elif post.author.avatar %}
+
+                        <img src="{{ post.author.avatar.url }}"
+                             class="rounded-circle me-3"
+                             style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #ddd;">
+
+                    <!-- اگر هیچ تصویری وجود نداشت -->
+                    {% else %}
+
+                        <div class="rounded-circle me-3 bg-light d-flex align-items-center justify-content-center"
+                             style="width: 48px; height: 48px; border: 2px solid #ddd;">
+
+                            <i class="bi bi-person-fill"
+                               style="font-size: 1.8rem; color: #aaa;"></i>
+
+                        </div>
+
+                    {% endif %}
+
+                    <!-- اطلاعات نویسنده -->
+                    <div>
+
+                        <!-- نام نمایشی -->
+                        <strong style="font-size: 1.1rem;">
+                            {{ post.author.profile.nickname|default:post.author.username }}
+                        </strong>
+
+                        <br>
+
+                        <!-- نام کاربری + تاریخ انتشار -->
+                        <small class="text-muted">
+                            @{{ post.author.username }} —
+                            {{ post.created_at|date:"d F Y - H:i" }}
+                        </small>
+
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- متن اصلی پست -->
+                <div class="post-content">
+                    {{ post.content|linebreaks }}
+                </div>
+
+                <!-- =====================================
+                     دکمه لایک پست
+                ===================================== -->
+                <div class="mt-4">
+
+                    <form method="post"
+                          action="{% url 'forum:like_post' post.pk %}"
+                          style="display: inline;">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-outline-primary">
+                            ❤️ {{ post.likes.count }} لایک
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =====================================
+             بخش کامنت‌ها
+        ===================================== -->
+        <h5 class="mb-3">{{ comments.count }} نظر</h5>
+
+        <!-- حلقه نمایش کامنت‌ها -->
+        {% for comment in comments %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <!-- =====================================
+                     نویسنده کامنت + تصویر پروفایل
+                ===================================== -->
+                <div class="d-flex align-items-start">
+
+                    {% if comment.author.profile and comment.author.profile.avatar %}
+
+                        <img src="{{ comment.author.profile.avatar.url }}"
+                             class="rounded-circle me-3"
+                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+
+                    {% elif comment.author.avatar %}
+
+                        <img src="{{ comment.author.avatar.url }}"
+                             class="rounded-circle me-3"
+                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
+
+                    {% else %}
+
+                        <div class="rounded-circle me-3 bg-light d-flex align-items-center justify-content-center"
+                             style="width: 40px; height: 40px; border: 2px solid #ddd;">
+
+                            <i class="bi bi-person-fill"
+                               style="font-size: 1.5rem; color: #aaa;"></i>
+
+                        </div>
+
+                    {% endif %}
+
+                    <!-- متن کامنت -->
+                    <div class="flex-grow-1">
+
+                        <!-- نام نویسنده -->
+                        <strong>
+                            {{ comment.author.profile.nickname|default:comment.author.username }}
+                        </strong>
+
+                        <!-- زمان نسبی -->
+                        <small class="text-muted float-end">
+                            {{ comment.created_at|timesince }} پیش
+                        </small>
+
+                        <!-- محتوای کامنت -->
+                        <p class="mt-2 mb-0">
+                            {{ comment.content|linebreaks }}
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% empty %}
+
+            <!-- اگر کامنتی وجود نداشت -->
+            <p class="text-muted">هنوز نظری ثبت نشده است.</p>
+
+        {% endfor %}
+
+        <!-- =====================================
+             فرم ارسال کامنت
+        ===================================== -->
+        {% if user.is_authenticated %}
+
+        <div class="card mt-4">
+
+            <div class="card-header">
+                نوشتن نظر
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{ comment_form.as_p }}
+
+                    <button type="submit" class="btn btn-primary">
+                        ارسال نظر
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- اگر کاربر لاگین نکرده باشد -->
+        <div class="alert alert-warning">
+            برای ارسال نظر باید
+            <a href="{% url 'accounts:login' %}">وارد شوید</a>.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================
+         سایدبار: اطلاعات پست + عملیات
+    ===================================== -->
+    <div class="col-lg-4">
+
+        <div class="card sticky-top" style="top: 20px;">
+
+            <div class="card-body">
+
+                <!-- دسته‌بندی پست -->
+                <p>
+                    <strong>دسته‌بندی:</strong>
+                    {{ post.category.name|default:'بدون دسته' }}
+                </p>
+
+                <!-- اگر کاربر نویسنده پست باشد -->
+                {% if user == post.author %}
+
+                <div class="d-grid gap-2">
+
+                    <!-- دکمه ویرایش -->
+                    <a href="{% url 'forum:edit_post' post.pk %}"
+                       class="btn btn-warning">
+                        ویرایش پست
+                    </a>
+
+                    <!-- فرم حذف پست -->
+                    <form method="post"
+                          action="{% url 'forum:delete_post' post.pk %}"
+                          onsubmit="return confirm('آیا مطمئن هستید؟');">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-danger w-100">
+                            حذف پست
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
