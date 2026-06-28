@@ -91,12 +91,18 @@ TEMPLATES = [
 # دیتابیس (PostgreSQL)
 # ========================================
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://postgres:Jzf13890422@localhost:5432/postgres',
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgres://postgres:Jzf13890422@localhost:5432/postgres',
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#     )
+# }
 
 
 # ========================================
