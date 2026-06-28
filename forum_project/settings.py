@@ -19,7 +19,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dzh0^t5i#)cvq^u-gb^1to@8bp
 # در Render و Railway این مقدار از محیط خوانده می‌شود
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    'javadfaramarzi386.pythonanywhere.com',
+    '127.0.0.1',
+    'localhost'
+]
 
 
 # ========================================
